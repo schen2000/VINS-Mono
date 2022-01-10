@@ -77,7 +77,7 @@ void FeatureTracker::addPoints()
         track_cnt.push_back(1);
     }
 }
-
+// Feature track by Optical-Flow
 void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 {
     cv::Mat img;
@@ -115,6 +115,7 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
         for (int i = 0; i < int(forw_pts.size()); i++)
             if (status[i] && !inBorder(forw_pts[i]))
                 status[i] = 0;
+            // status contain 0/1 mask
         reduceVector(prev_pts, status);
         reduceVector(cur_pts, status);
         reduceVector(forw_pts, status);
@@ -188,6 +189,7 @@ void FeatureTracker::rejectWithF()
         }
 
         vector<uchar> status;
+        // status outliers
         cv::findFundamentalMat(un_cur_pts, un_forw_pts, cv::FM_RANSAC, F_THRESHOLD, 0.99, status);
         int size_a = cur_pts.size();
         reduceVector(prev_pts, status);
@@ -269,7 +271,7 @@ void FeatureTracker::undistortedPoints()
         cur_un_pts_map.insert(make_pair(ids[i], cv::Point2f(b.x() / b.z(), b.y() / b.z())));
         //printf("cur pts id %d %f %f", ids[i], cur_un_pts[i].x, cur_un_pts[i].y);
     }
-    // caculate points velocity
+    // caculate points velocity (2D)
     if (!prev_un_pts_map.empty())
     {
         double dt = cur_time - prev_time;
